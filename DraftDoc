@@ -32,7 +32,7 @@ Describe what attributes you'll focus your analysis on (mention if they are part
 We are focusing on the year 2000 in our project. To do this, we will simply use the R filter command for the year 2000. We will answer questions regarding the patterns found in birth dates across the whole year. 
 
 
-- What was the most common month to be born in 2000? 
+- What was the most common month for births in the year 2000, and how can we visually determine this?
 Sorted in descending order to understand the order in which the months rank.
 
 # Summarize births by month
@@ -56,8 +56,9 @@ ggplot(most_common_month, aes(x = reorder(month, -total_births), y = total_birth
   ) +
   theme_minimal()
 
+This bar chart was chosen because it clearly displays the total number of births for each month in the year 2000, sorted in descending order, allowing for quick and easy comparisons. The use of distinct colors for each month enhances clarity and readability. From the visualization, August stands out as the month with the highest number of births, as indicated by its tallest bar. July and September follow closely behind with slightly lower birth totals, while April and February have the fewest births, as shown by the shorter bars on the far right. In conclusion, the most common month to be born in the year 2000 was August, as it had the highest total number of births compared to all other months.
 
-- Most common date of the month?  (1-31)
+- What is the most common date of the month (1-31)  to be born, and how can we effectively visualize the differences among the top dates?
 We will focus on the top 5 dates of the month. While this could be simply queried, we can visualize this with an easy dot plot.
 
 # Dot plot
@@ -70,8 +71,10 @@ ggplot(top_dates, aes(x = total_births, y = reorder(factor(date_of_month), total
   ) +
   theme_minimal()
 
+We used a dot plot to visualize the top 5 most popular dates of the month to be born because it clearly displays individual data points (birth counts per date) and allows for easy comparison of differences in total births. By presenting this in a landscape format (horizontal layout), we emphasize the disparity along the x-axis (Total Births), making the differences between birth counts across dates more apparent. From the visualization, the 20th of the month stands out as the most common date for births, as it has the highest total births, represented by its position at the far right of the graph. Other popular dates, including the 21st, 18th, 14th, and 12th, follow in descending order of total births.
 
--Compare 2000 to 2009, make line chart for each year to compare visual trends. 
+
+- How did total births change between 2000 and 2009, and was the birth rate in 2009 smaller than in 2000 following the recession?
 Find total births in 2000 and total births in 2009, compare the respective US population to find the birth rate: was the birth rate in 2009 smaller than 2000 due to the recession?
 
 # Summarize total births by year
@@ -91,6 +94,7 @@ ggplot(annual_births, aes(x = year, y = total_births)) +
   ) +
   theme_minimal()
 
+A line chart is ideal for showing trends over time, as it clearly illustrates changes in total births for each year between 2000 and 2009. The line connecting the data points highlights upward and downward trends, while the orange points emphasize the exact birth totals for each year. From the visualization, total births started at approximately 4.12 million in 2000 and steadily increased after 2002, peaking dramatically around 2007 at nearly 4.38 million. However, following this peak, births declined sharply from 2008 to 2009, falling to approximately 4.01 million by 2009. Comparing the two years directly, total births declined by about 110,000 between 2000 and 2009. This steep drop aligns with the economic recession that began in late 2007, suggesting that economic uncertainty may have led families to delay having children due to financial concerns. To determine if the birth rate declined, we would need to compare total births to the overall US population for both years. However, given the likely growth in the US population over this period, the decline in total births indicates a more significant drop in the birth rate. Overall, yes, the total births in 2009 were smaller than in 2000, decreasing from approximately 4.12 million to 4.01 million. The sharp decline after 2007 suggests that the economic recession may have contributed to this reduction, as families postponed childbirth due to financial instability.
 
 
 281.4 million (2000) https://www.census.gov/library/publications/2001/dec/c2kbr01-12.html
