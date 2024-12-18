@@ -1,0 +1,121 @@
+#| echo: true
+#| eval: FALSE
+library(readr)
+library(dplyr) 
+library(ggplot2) 
+
+# Load data
+birthsData <- read_csv(url("https://raw.githubusercontent.com/fivethirtyeight/data/refs/heads/master/births/US_births_2000-2014_SSA.csv"))
+births_2000 <- birthsData %>% 
+  filter(year == 2000) 
+
+# Summarize births by month
+most_common_month <- births_2000 %>%
+  group_by(month) %>%
+  summarise(total_births = sum(births)) %>%
+  arrange(desc(total_births))
+
+
+# Bar chart sorted in descending order with month names
+ggplot(most_common_month, aes(x = reorder(month, -total_births), y = total_births, fill = month)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Total Births by Month in 2000 (Descending Order)",
+    x = "Month",
+    y = "Total Births",
+    fill = "Month"
+  ) +
+  theme_minimal()
+
+# Top dates
+top_dates <- births_2000 %>%
+  group_by(date_of_month) %>%
+  summarise(total_births = sum(births)) %>%
+  arrange(desc(total_births)) %>%
+  head(5)
+
+# Dot plot
+ggplot(top_dates, aes(x = total_births, y = reorder(factor(date_of_month), total_births))) +
+  geom_point(size = 5, color = "darkorange") +
+  labs(
+    title = "Top 5 Most Popular Dates of the Month to Be Born",
+    x = "Total Births",
+    y = "Date of the Month"
+  ) +
+  theme_minimal()
+
+# Summarize total births by year
+annual_births <- births_2000 %>%
+  group_by(year) %>%
+  summarise(total_births = sum(births)) %>%
+  arrange(year)
+
+# Create a line chart
+ggplot(annual_births, aes(x = year, y = total_births)) +
+  geom_line(color = "steelblue", size = 1.2) +   # Add line
+  geom_point(color = "darkorange", size = 3) +  # Highlight points
+  labs(
+    title = "Total Births by Year (2000-2009)",
+    x = "Year",
+    y = "Total Births"
+  ) +
+  theme_minimal()
+
+births_by_day <- births_2000 %>%
+  group_by(day_of_week) %>%
+  summarize(total_births = sum(births)) %>%
+  ungroup()
+
+# Add labels for days of the week
+day_labels <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+births_by_day <- births_by_day %>%
+  mutate(day_label = factor(day_of_week, levels = 1:7, labels = day_labels))
+
+# Calculate percentage for each day
+births_by_day <- births_by_day %>%
+  mutate(percentage = total_births / sum(total_births) * 100,
+         label = paste0(day_label, " (", round(percentage, 1), "%)"))
+
+# Create a pie chart with labels
+ggplot(births_by_day, aes(x = "", y = total_births, fill = day_label)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = label), position = position_stack(vjust = 0.5)) +
+  labs(title = "Births by Day of the Week in 2000", fill = "Day of the Week") +
+  theme_minimal() +
+  theme(axis.text = element_blank(), 
+        axis.ticks = element_blank(), 
+        panel.grid = element_blank())
+
+
+holidays <- data.frame(
+  month = c(1, 2, 5, 7, 9, 10, 11, 11, 12),
+  date_of_month = c(1, 21, 29, 4, 4, 9, 11, 23, 25),
+  holiday_name = c("New Year's Day", "President's Day", "Memorial Day", 
+                   "Independence Day", "Labor Day", "Columbus Day", 
+                   "Veterans Day", "Thanksgiving", "Christmas")
+)
+
+# Filter the birthsData for the year 2000 and the specific holidays
+filtered_data <- birthsData %>%
+  filter(year == 2000) %>%
+  inner_join(holidays, by = c("month", "date_of_month"))
+
+# Create the bar chart
+ggplot(filtered_data, aes(x = reorder(holiday_name, births), y = births, fill = holiday_name)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Total Births on Holidays in 2000", 
+       x = "Holiday", y = "Total Births") +
+  scale_fill_discrete(name = "Holiday") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+births_2000 <- births_2000 %>%
+  mutate(date = as.Date(paste(year, month, date_of_month, sep = "-")))
+births_by_date <- births_2000 %>%
+  group_by(date) %>%
+  summarize(total_births = sum(births)) %>%
+  ungroup()
+most_common_date <- births_by_date %>%
+  filter(total_births == max(total_births))
+print(most_common_date)
